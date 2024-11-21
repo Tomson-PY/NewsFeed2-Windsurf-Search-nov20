@@ -56,6 +56,42 @@ export const Dashboard: React.FC = () => {
     return Math.ceil(words / wordsPerMinute);
   };
 
+  // Add utility function to extract image URL from content
+  const extractImageUrl = (content: string): string | null => {
+    console.log('Checking content for images:', content);
+
+    // Try to find an img tag in the content
+    const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
+    if (imgMatch) {
+      console.log('Found img tag:', imgMatch[1]);
+      return imgMatch[1];
+    }
+
+    // Try to find a media:content tag
+    const mediaMatch = content.match(/<media:content[^>]+url="([^">]+)"/);
+    if (mediaMatch) {
+      console.log('Found media:content tag:', mediaMatch[1]);
+      return mediaMatch[1];
+    }
+
+    // Try to find an enclosure tag
+    const enclosureMatch = content.match(/<enclosure[^>]+url="([^">]+)"[^>]+type="image/);
+    if (enclosureMatch) {
+      console.log('Found enclosure tag:', enclosureMatch[1]);
+      return enclosureMatch[1];
+    }
+
+    // Try to find any URL that ends with an image extension
+    const urlMatch = content.match(/https?:\/\/[^\s<>"']+?\.(?:jpg|jpeg|gif|png|webp)/i);
+    if (urlMatch) {
+      console.log('Found image URL:', urlMatch[0]);
+      return urlMatch[0];
+    }
+
+    console.log('No image found in content');
+    return null;
+  };
+
   // Filter and sort items
   const filteredItems = feedItems
     .filter((item) => preferences?.selectedCategories?.includes(item.category))
@@ -143,6 +179,10 @@ export const Dashboard: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
 
+  useEffect(() => {
+    console.log('Feed items:', feedItems);
+  }, [feedItems]);
+
   if (!preferences) {
     return <div>Loading...</div>;
   }
@@ -186,83 +226,102 @@ export const Dashboard: React.FC = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedItems.map((item) => (
-              <article key={item.id} className="news-card">
-                <div className="news-card-header">
-                  <h2 className="text-xl font-semibold mb-3">
-                    <a 
-                      href={item.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="text-blue-600 hover:text-blue-800 dark:text-sky-300 dark:hover:text-sky-200"
-                    >
-                      {item.title}
-                    </a>
-                  </h2>
-                  <p className="text-card-foreground mb-4">{item.content}</p>
-                  <div className="flex justify-between items-center text-sm">
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-muted-foreground">
-                          {new Date(item.pubDate).toLocaleDateString()}
-                        </span>
-                        <span className="text-muted-foreground">-</span>
-                        <span className="font-bold text-blue-600 dark:text-blue-400">
-                          {feeds.find(feed => feed.id === item.feedId)?.title || 'Unknown Source'}
-                        </span>
-                        <span className="text-muted-foreground">-</span>
-                        <span className="flex items-center gap-1 text-gray-500">
-                          <Clock className="w-3 h-3" />
-                          {estimateReadingTime(item.content)} min read
-                        </span>
-                        <span className={`tag-${item.category.replace(/\s+/g, '')}`}>
-                          {item.category}
-                        </span>
+              <article 
+                key={item.id} 
+                className="news-card bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <div className="relative">
+                  {extractImageUrl(item.fullContent || item.content) && (
+                    <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
+                      <img
+                        src={extractImageUrl(item.fullContent || item.content)}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          console.log('Image failed to load:', (e.target as HTMLImageElement).src);
+                          (e.target as HTMLElement).parentElement!.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <div className="news-card-header">
+                      <h2 className="text-xl font-semibold mb-3">
+                        <a 
+                          href={item.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-blue-600 hover:text-blue-800 dark:text-sky-300 dark:hover:text-sky-200"
+                        >
+                          {item.title}
+                        </a>
+                      </h2>
+                      <p className="text-card-foreground mb-4 line-clamp-3">{item.content.replace(/<[^>]*>/g, '')}</p>
+                      <div className="flex justify-between items-center text-sm">
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-muted-foreground">
+                              {new Date(item.pubDate).toLocaleDateString()}
+                            </span>
+                            <span className="text-muted-foreground">-</span>
+                            <span className="font-bold text-blue-600 dark:text-blue-400">
+                              {feeds.find(feed => feed.id === item.feedId)?.title || 'Unknown Source'}
+                            </span>
+                            <span className="text-muted-foreground">-</span>
+                            <span className="flex items-center gap-1 text-gray-500">
+                              <Clock className="w-3 h-3" />
+                              {estimateReadingTime(item.content)} min read
+                            </span>
+                          </div>
+                          <div>{getTimeDifference(item.pubDate)}</div>
+                        </div>
                       </div>
-                      <div>{getTimeDifference(item.pubDate)}</div>
                     </div>
-                  </div>
-                </div>
-                <div className="news-card-footer">
-                  <div className="flex-1 flex gap-2">
-                    {getMatchingTags(item).map((tag) => (
-                      <span key={tag} className="tag-badge tag-badge-default">
-                        <Tag className="w-3 h-3" />
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex space-x-2">
-                    <div className="tooltip-wrapper">
-                      <button
-                        onClick={() => toggleRead(item.id)}
-                        className="action-button"
-                        aria-label={preferences.readItems?.includes(item.id) ? "Mark as unread" : "Mark as read"}
-                      >
-                        {preferences.readItems?.includes(item.id) ? (
-                          <Circle className="w-5 h-5 text-primary fill-current" />
-                        ) : (
-                          <CircleDot className="w-5 h-5 text-muted-foreground" />
-                        )}
-                        <span className="tooltip">
-                          {preferences.readItems?.includes(item.id) ? "Mark as unread" : "Mark as read"}
-                        </span>
-                      </button>
-                    </div>
-                    <div className="tooltip-wrapper">
-                      <button
-                        onClick={() => toggleBookmark(item.id)}
-                        className="action-button"
-                        aria-label={preferences.bookmarkedItems?.includes(item.id) ? "Remove from Read Later" : "Save for Later"}
-                      >
-                        {preferences.bookmarkedItems?.includes(item.id) ? (
-                          <BookmarkCheck className="w-5 h-5 text-primary fill-current" />
-                        ) : (
-                          <Bookmark className="w-5 h-5 text-muted-foreground" />
-                        )}
-                        <span className="tooltip">
-                          {preferences.bookmarkedItems?.includes(item.id) ? "Remove from Read Later" : "Save for Later"}
-                        </span>
-                      </button>
+                    <div className="news-card-footer mt-4 pt-4 border-t border-border">
+                      <div className="flex justify-between items-center">
+                        <div className="flex-1 flex gap-2">
+                          {getMatchingTags(item).map((tag) => (
+                            <span key={tag} className="tag-badge tag-badge-default">
+                              <Tag className="w-3 h-3" />
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex space-x-2">
+                          <div className="tooltip-wrapper">
+                            <button
+                              onClick={() => toggleRead(item.id)}
+                              className="action-button"
+                              aria-label={preferences.readItems?.includes(item.id) ? "Mark as unread" : "Mark as read"}
+                            >
+                              {preferences.readItems?.includes(item.id) ? (
+                                <Circle className="w-5 h-5 text-primary fill-current" />
+                              ) : (
+                                <CircleDot className="w-5 h-5 text-muted-foreground" />
+                              )}
+                              <span className="tooltip">
+                                {preferences.readItems?.includes(item.id) ? "Mark as unread" : "Mark as read"}
+                              </span>
+                            </button>
+                          </div>
+                          <div className="tooltip-wrapper">
+                            <button
+                              onClick={() => toggleBookmark(item.id)}
+                              className="action-button"
+                              aria-label={preferences.bookmarkedItems?.includes(item.id) ? "Remove from Read Later" : "Save for Later"}
+                            >
+                              {preferences.bookmarkedItems?.includes(item.id) ? (
+                                <BookmarkCheck className="w-5 h-5 text-primary fill-current" />
+                              ) : (
+                                <Bookmark className="w-5 h-5 text-muted-foreground" />
+                              )}
+                              <span className="tooltip">
+                                {preferences.bookmarkedItems?.includes(item.id) ? "Remove from Read Later" : "Save for Later"}
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

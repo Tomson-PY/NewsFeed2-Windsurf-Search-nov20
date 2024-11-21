@@ -99,6 +99,7 @@ export async function parseFeed(url: string, category: string, feedId: string): 
         title: title || 'Untitled',
         link: link || '',
         content: cleanedContent.substring(0, 300) + (cleanedContent.length > 300 ? '...' : ''),
+        fullContent: content, // Store the full content for image extraction
         pubDate: item.pubDate || item.published || item.updated || new Date().toISOString(),
         category,
         feedId
