@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Home, Rss, Bookmark, Tag, Settings, RefreshCw } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
@@ -10,57 +10,77 @@ const viewConfigs = {
   dashboard: {
     title: 'Latest Updates',
     subtitle: 'Stay informed with your personalized news feed',
-    icon: <Home className="w-6 h-6" />
+    icon: Home,
   },
   feeds: {
-    title: 'Manage AI News Feeds',
-    subtitle: 'Customize your AI news sources',
-    icon: <Rss className="w-6 h-6" />
+    title: 'Manage Feeds',
+    subtitle: 'Add, remove, and organize your news sources',
+    icon: Rss,
   },
   bookmarks: {
-    title: 'Read Later',
-    subtitle: 'Your saved articles for future reading',
-    icon: <Bookmark className="w-6 h-6" />
+    title: 'Bookmarks',
+    subtitle: 'Access your saved articles',
+    icon: Bookmark,
   },
   tags: {
-    title: 'Search Tags',
-    subtitle: 'Manage your content filters',
-    icon: <Tag className="w-6 h-6" />
+    title: 'Tag Presets',
+    subtitle: 'Manage your search tag presets',
+    icon: Tag,
   },
   settings: {
     title: 'Settings',
-    subtitle: 'Customize your experience',
-    icon: <Settings className="w-6 h-6" />
-  }
+    subtitle: 'Customize your news feed experience',
+    icon: Settings,
+  },
 };
 
 export const SubHeader: React.FC<SubHeaderProps> = ({ activeView }) => {
   const content = viewConfigs[activeView];
+  const Icon = content.icon;
   const { refreshFeeds, isRefreshing } = useStore();
 
+  // Debounced refresh handler with touch event support
+  const handleRefresh = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault(); // Prevent default behavior
+    
+    if (isRefreshing) return;
+    
+    // For touch events, prevent the subsequent click
+    if (e.type === 'touchend') {
+      const target = e.target as HTMLElement;
+      target.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }, { once: true });
+    }
+
+    refreshFeeds();
+  }, [refreshFeeds, isRefreshing]);
+
   return (
-    <div className="fixed top-16 left-0 md:left-20 right-0 z-10 bg-card border-b border-border shadow-sm">
-      <div className="px-4 md:px-8 py-4 md:py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="p-2 md:p-3 bg-gradient-to-br from-primary/10 to-primary/20 rounded-xl text-primary shadow-sm">
-              {content.icon}
-            </div>
-            <div className="ml-3 md:ml-4">
-              <h2 className="text-base md:text-xl font-semibold text-card-foreground mb-0.5 md:mb-1">{content.title}</h2>
+    <div className="sticky top-16 z-10 bg-background border-b">
+      <div className="container mx-auto">
+        <div className="flex items-center justify-between py-4">
+          <div className="flex items-center space-x-3">
+            <Icon className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground" />
+            <div>
+              <h2 className="text-lg md:text-xl font-semibold">{content.title}</h2>
               <p className="text-xs md:text-sm text-muted-foreground">{content.subtitle}</p>
             </div>
           </div>
           
           {activeView === 'dashboard' && (
             <button
-              onClick={() => refreshFeeds()}
+              onTouchEnd={handleRefresh}
+              onClick={handleRefresh}
               disabled={isRefreshing}
-              className={`flex items-center space-x-2 px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-all duration-200 ${
-                isRefreshing
+              aria-label={isRefreshing ? 'Refreshing feeds' : 'Refresh feeds'}
+              className={`flex items-center space-x-2 px-3 md:px-4 py-1.5 md:py-2 rounded-lg 
+                transition-all duration-200 touch-manipulation select-none
+                ${isRefreshing
                   ? 'bg-orange-500 cursor-not-allowed'
-                  : 'bg-primary hover:bg-primary/90'
-              } text-primary-foreground text-sm md:text-base`}
+                  : 'bg-primary hover:bg-primary/90 active:bg-primary/80'
+                } text-primary-foreground text-sm md:text-base`}
             >
               <RefreshCw className={`w-4 h-4 md:w-5 md:h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
               <span className="hidden md:inline">{isRefreshing ? 'Refreshing...' : 'Refresh Feeds'}</span>
