@@ -53,66 +53,67 @@ export const FeedManager: React.FC = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <label className="text-sm font-medium text-card-foreground">Filter by Category</label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="mt-1 block w-64 rounded-lg border-input bg-card text-card-foreground shadow-sm focus:border-primary focus:ring-primary"
-            >
-              <option value="all">All Categories</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
-          </div>
-          
-          <button
-            onClick={handleReset}
-            className="flex items-center space-x-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            <RefreshCw className="w-5 h-5" />
-            <span>Reset Feeds</span>
-          </button>
-        </div>
+    <div className="space-y-6">
+      <div className="flex flex-col space-y-4">
+        <button
+          onClick={handleReset}
+          className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors w-full md:w-auto"
+        >
+          Reset to Default Feeds
+        </button>
 
-        <div className="space-y-4">
-          {filteredFeeds.map((feed) => (
-            <div key={feed.id} className="flex items-center justify-between bg-card p-4 rounded-lg shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center space-x-4">
-                {getCategoryIcon(feed.category)}
-                <div>
-                  <h3 className="font-medium text-card-foreground">{feed.title}</h3>
-                  <span className={`inline-block mt-1 px-3 py-0.5 rounded-full text-sm font-medium tag-${feed.category.replace(/\s+/g, '')}`}>
-                    {feed.category}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={preferences.selectedFeeds.includes(feed.id)}
-                    onChange={() => handleFeedToggle(feed.id)}
-                    className="rounded text-primary focus:ring-primary border-input"
-                  />
-                  <span className="text-sm text-card-foreground">Active</span>
-                </label>
-                
-                <button
-                  onClick={() => handleRemoveFeed(feed.id)}
-                  className="p-2 text-muted-foreground hover:text-destructive rounded-full hover:bg-muted/50"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
+        <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
+          <label className="font-medium text-card-foreground">
+            Filter by Category:
+          </label>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-3 py-1.5 rounded-lg bg-muted text-card-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="all">All Categories</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filteredFeeds.map((feed) => (
+          <div key={feed.id} className="flex items-center justify-between bg-card p-4 rounded-lg shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center space-x-4">
+              {getCategoryIcon(feed.category)}
+              <div>
+                <h3 className="font-medium text-card-foreground">{feed.title}</h3>
+                <span className={`inline-block mt-1 px-3 py-0.5 rounded-full text-sm font-medium tag-${feed.category.replace(/\s+/g, '')}`}>
+                  {feed.category}
+                </span>
               </div>
             </div>
-          ))}
-        </div>
+            
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={preferences.selectedFeeds.includes(feed.id)}
+                  onChange={() => handleFeedToggle(feed.id)}
+                  className="rounded text-primary focus:ring-primary border-input"
+                />
+                <span className="text-sm text-card-foreground">Active</span>
+              </label>
+              
+              <button
+                onClick={() => handleRemoveFeed(feed.id)}
+                className="p-2 text-muted-foreground hover:text-destructive rounded-full hover:bg-muted/50"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
