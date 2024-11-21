@@ -10,8 +10,8 @@ export const Header: React.FC = () => {
     <header className="fixed top-0 left-0 right-0 z-20 bg-primary text-white h-20 shadow-lg">
       <div className="h-full max-w-7xl mx-auto flex items-center justify-between px-8">
         <div className="flex items-center">
-          <div className="bg-gradient-to-br from-white to-purple-100 p-2 rounded-xl shadow-md">
-            <Logo className="w-8 h-8 text-purple-900" />
+          <div className="bg-white rounded-xl shadow-md p-1">
+            <Logo className="w-12 h-12" />
           </div>
           <div className="ml-4 text-center">
             <h1 className="text-2xl font-bold tracking-tight text-white">
