@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../store/useStore';
-import { Bookmark, BookmarkCheck, Circle, CircleDot, Tag, ChevronLeft, ChevronRight, MoreHorizontal, Search } from 'lucide-react';
+import { Bookmark, BookmarkCheck, Circle, CircleDot, Tag, ChevronLeft, ChevronRight, MoreHorizontal, Search, Clock, X } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
   const { feedItems, preferences, feeds, toggleBookmark, toggleRead } = useStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const itemsPerPage = 21;
   
   const filterItemsByTags = (item: any) => {
@@ -46,6 +47,13 @@ export const Dashboard: React.FC = () => {
     
     const diffTime = Math.ceil((nowDate.getTime() - articleDay.getTime()) / (1000 * 60 * 60 * 24));
     return <span className="text-gray-500">{diffTime} {diffTime === 1 ? 'Day' : 'Days'}</span>;
+  };
+
+  // Add reading time estimation utility
+  const estimateReadingTime = (content: string): number => {
+    const wordsPerMinute = 200;
+    const words = content.trim().split(/\s+/).length;
+    return Math.ceil(words / wordsPerMinute);
   };
 
   // Filter and sort items
@@ -121,6 +129,20 @@ export const Dashboard: React.FC = () => {
     return pageNumbers;
   };
 
+  // Add keyboard shortcut handler
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Only trigger if not in an input field already
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
   if (!preferences) {
     return <div>Loading...</div>;
   }
@@ -129,18 +151,27 @@ export const Dashboard: React.FC = () => {
     <div className="p-8">
       {/* Search Bar */}
       <div className="mb-6 max-w-2xl mx-auto">
-        <div className="relative">
+        <div className="relative w-full max-w-sm">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
           <input
+            ref={searchInputRef}
             type="text"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setCurrentPage(1); // Reset to first page when searching
             }}
-            placeholder="Search news feeds..."
-            className="w-full px-4 py-2 pl-10 rounded-lg border border-input bg-card text-card-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+            placeholder="Search articles... (Press '/' to focus)"
+            className="w-full px-9 py-2 rounded-lg border border-input bg-card text-card-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
           />
-          <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -175,8 +206,13 @@ export const Dashboard: React.FC = () => {
                           {new Date(item.pubDate).toLocaleDateString()}
                         </span>
                         <span className="text-muted-foreground">-</span>
-                        <span className="text-gray-500">
+                        <span className="font-bold text-blue-600 dark:text-blue-400">
                           {feeds.find(feed => feed.id === item.feedId)?.title || 'Unknown Source'}
+                        </span>
+                        <span className="text-muted-foreground">-</span>
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <Clock className="w-3 h-3" />
+                          {estimateReadingTime(item.content)} min read
                         </span>
                         <span className={`tag-${item.category.replace(/\s+/g, '')}`}>
                           {item.category}
