@@ -55,7 +55,7 @@ export const Guide: React.FC<GuideProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Focus search</span>
+                  <span className="text-muted-foreground">Search Shortcut</span>
                   <kbd className="px-2 py-1 bg-background rounded border text-sm">/</kbd>
                 </div>
               </div>

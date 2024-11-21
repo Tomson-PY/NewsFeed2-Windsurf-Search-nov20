@@ -201,7 +201,7 @@ export const Dashboard: React.FC = () => {
               setSearchQuery(e.target.value);
               setCurrentPage(1); // Reset to first page when searching
             }}
-            placeholder="Search articles... (Press '/' to focus)"
+            placeholder="Search Articles... shortcut press /"
             className="w-full px-9 py-2 rounded-lg border border-input bg-card text-card-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
           />
           {searchQuery && (
