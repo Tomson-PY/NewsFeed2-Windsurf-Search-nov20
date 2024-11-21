@@ -57,7 +57,7 @@ export const FeedManager: React.FC = () => {
       <div className="flex flex-col space-y-4">
         <button
           onClick={handleReset}
-          className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors w-full md:w-auto"
+          className="px-4 py-2 bg-muted hover:bg-muted/80 text-yellow-500 rounded-lg transition-colors w-fit text-sm"
         >
           Reset to Default Feeds
         </button>
