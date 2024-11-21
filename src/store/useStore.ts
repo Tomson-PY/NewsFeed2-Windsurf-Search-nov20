@@ -1,11 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Feed, FeedItem, UserPreferences, TagPreset } from '../types';
+import { parseFeed } from '../utils/feedParser';
+import { createProxiedUrl } from '../utils/corsProxy';
 
 interface StoreState {
   feeds: Feed[];
   feedItems: FeedItem[];
   preferences: UserPreferences;
+  isRefreshing: boolean;
   addFeed: (feed: Feed) => void;
   removeFeed: (id: string) => void;
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
@@ -19,6 +22,7 @@ interface StoreState {
   applyTagPreset: (presetId: string) => void;
   toggleTheme: () => void;
   resetFeeds: () => void;
+  refreshFeeds: () => Promise<void>;
 }
 
 const defaultFeeds: Feed[] = [
@@ -77,12 +81,6 @@ const defaultFeeds: Feed[] = [
     category: 'AI',
   },
   {
-    id: 'arxiv-ai',
-    title: 'arXiv AI',
-    url: 'http://export.arxiv.org/rss/cs.AI',
-    category: 'AI Research',
-  },
-  {
     id: 'ml-mastery',
     title: 'Machine Learning Mastery',
     url: 'https://machinelearningmastery.com/feed/',
@@ -108,10 +106,43 @@ const initialPreferences: UserPreferences = {
 
 export const useStore = create<StoreState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       feeds: defaultFeeds,
       feedItems: [],
+      isRefreshing: false,
       preferences: initialPreferences,
+      
+      refreshFeeds: async () => {
+        const state = get();
+        if (state.isRefreshing) return;
+
+        set({ isRefreshing: true });
+        try {
+          const activeFeedPromises = state.feeds
+            .filter(feed => state.preferences.selectedFeeds.includes(feed.id))
+            .map(async (feed) => {
+              try {
+                const proxiedUrl = createProxiedUrl(feed.url);
+                const items = await parseFeed(proxiedUrl, feed.category, feed.id);
+                return items;
+              } catch (error) {
+                console.error(`Error fetching feed ${feed.title}:`, error);
+                return [];
+              }
+            });
+
+          const feedResults = await Promise.all(activeFeedPromises);
+          const allItems = feedResults.flat().sort((a, b) => 
+            new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+          );
+          
+          set({ feedItems: allItems, isRefreshing: false });
+        } catch (error) {
+          console.error('Error refreshing feeds:', error);
+          set({ isRefreshing: false });
+        }
+      },
+
       addFeed: (feed) =>
         set((state) => ({ feeds: [...state.feeds, feed] })),
       removeFeed: (id) =>

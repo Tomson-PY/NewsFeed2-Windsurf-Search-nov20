@@ -8,68 +8,73 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange }) => {
   return (
-    <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-20 bg-gradient-to-b from-purple-900 via-indigo-900 to-purple-900 text-white flex flex-col items-center py-6 shadow-xl">
-      <nav className="flex flex-col space-y-6">
-        <button 
+    <nav className="fixed bottom-0 left-0 right-0 md:top-16 md:left-0 md:bottom-0 md:w-20 bg-card border-t md:border-r border-border z-10">
+      <div className="flex md:flex-col justify-around md:justify-start items-center h-16 md:h-full md:pt-6 md:space-y-6">
+        <button
           onClick={() => onViewChange('dashboard')}
-          className={`p-3 rounded-xl transition-all duration-300 ${
-            activeView === 'dashboard' 
-              ? 'bg-white/20 shadow-lg scale-110' 
-              : 'hover:bg-white/10 hover:scale-105'
+          className={`p-2 rounded-xl transition-colors ${
+            activeView === 'dashboard'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-card-foreground hover:bg-muted/50'
           }`}
-          title="Latest Updates"
+          title="Dashboard"
         >
           <Home className="w-6 h-6" />
+          <span className="sr-only">Dashboard</span>
         </button>
-        
-        <button 
+
+        <button
           onClick={() => onViewChange('feeds')}
-          className={`p-3 rounded-xl transition-all duration-300 ${
-            activeView === 'feeds' 
-              ? 'bg-white/20 shadow-lg scale-110' 
-              : 'hover:bg-white/10 hover:scale-105'
+          className={`p-2 rounded-xl transition-colors ${
+            activeView === 'feeds'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-card-foreground hover:bg-muted/50'
           }`}
           title="Manage Feeds"
         >
           <Rss className="w-6 h-6" />
+          <span className="sr-only">Manage Feeds</span>
         </button>
-        
-        <button 
+
+        <button
           onClick={() => onViewChange('bookmarks')}
-          className={`p-3 rounded-xl transition-all duration-300 ${
-            activeView === 'bookmarks' 
-              ? 'bg-white/20 shadow-lg scale-110' 
-              : 'hover:bg-white/10 hover:scale-105'
+          className={`p-2 rounded-xl transition-colors ${
+            activeView === 'bookmarks'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-card-foreground hover:bg-muted/50'
           }`}
-          title="Read Later"
+          title="Bookmarks"
         >
           <Bookmark className="w-6 h-6" />
+          <span className="sr-only">Bookmarks</span>
         </button>
-        
-        <button 
+
+        <button
           onClick={() => onViewChange('tags')}
-          className={`p-3 rounded-xl transition-all duration-300 ${
-            activeView === 'tags' 
-              ? 'bg-white/20 shadow-lg scale-110' 
-              : 'hover:bg-white/10 hover:scale-105'
+          className={`p-2 rounded-xl transition-colors ${
+            activeView === 'tags'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-card-foreground hover:bg-muted/50'
           }`}
           title="Search Tags"
         >
           <Tag className="w-6 h-6" />
+          <span className="sr-only">Search Tags</span>
         </button>
-      </nav>
 
-      <button 
-        onClick={() => onViewChange('settings')}
-        className={`mt-auto p-3 rounded-xl transition-all duration-300 ${
-          activeView === 'settings' 
-            ? 'bg-white/20 shadow-lg scale-110' 
-            : 'hover:bg-white/10 hover:scale-105'
-        }`}
-        title="Settings"
-      >
-        <Settings className="w-6 h-6" />
-      </button>
-    </aside>
+        <button
+          onClick={() => onViewChange('settings')}
+          className={`p-2 rounded-xl transition-colors ${
+            activeView === 'settings'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:text-card-foreground hover:bg-muted/50'
+          }`}
+          title="Settings"
+        >
+          <Settings className="w-6 h-6" />
+          <span className="sr-only">Settings</span>
+        </button>
+      </div>
+    </nav>
   );
 };

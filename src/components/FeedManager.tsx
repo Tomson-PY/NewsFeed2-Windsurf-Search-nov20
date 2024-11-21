@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore';
 import { Globe, Trash2, Bot, Brain, Image, Code, Newspaper, RefreshCw } from 'lucide-react';
 
 export const FeedManager: React.FC = () => {
-  const { feeds, preferences, updatePreferences, removeFeed, resetFeeds } = useStore();
+  const { feeds, preferences, updatePreferences, removeFeed, resetFeeds, refreshFeeds } = useStore();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const categories = Array.from(new Set(feeds.map((feed) => feed.category)));
@@ -12,17 +12,26 @@ export const FeedManager: React.FC = () => {
     ? feeds
     : feeds.filter((feed) => feed.category === selectedCategory);
 
-  const handleFeedToggle = (feedId: string) => {
+  const handleFeedToggle = async (feedId: string) => {
     const newSelectedFeeds = preferences.selectedFeeds.includes(feedId)
       ? preferences.selectedFeeds.filter((id) => id !== feedId)
       : [...preferences.selectedFeeds, feedId];
     
-    updatePreferences({ selectedFeeds: newSelectedFeeds });
+    await updatePreferences({ selectedFeeds: newSelectedFeeds });
+    refreshFeeds();
   };
 
-  const handleReset = () => {
+  const handleRemoveFeed = async (feedId: string) => {
+    if (window.confirm('Are you sure you want to remove this feed?')) {
+      removeFeed(feedId);
+      refreshFeeds();
+    }
+  };
+
+  const handleReset = async () => {
     if (window.confirm('This will reset all feeds to their default state. Your other preferences will be preserved. Are you sure?')) {
       resetFeeds();
+      refreshFeeds();
     }
   };
 
@@ -95,7 +104,7 @@ export const FeedManager: React.FC = () => {
                 </label>
                 
                 <button
-                  onClick={() => removeFeed(feed.id)}
+                  onClick={() => handleRemoveFeed(feed.id)}
                   className="p-2 text-muted-foreground hover:text-destructive rounded-full hover:bg-muted/50"
                 >
                   <Trash2 className="w-5 h-5" />

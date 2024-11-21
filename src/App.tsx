@@ -85,11 +85,11 @@ function App() {
   return (
     <div className={`min-h-screen bg-background ${preferences.theme}`}>
       <Header />
-      <div className="flex min-h-screen pt-20">
+      <div className="flex flex-col md:flex-row min-h-screen pt-16 md:pt-20">
         <Sidebar onViewChange={setActiveView} activeView={activeView} />
-        <main className="flex-1 ml-20">
+        <main className="flex-1 w-full md:ml-20">
           <SubHeader activeView={activeView} />
-          <div className="pt-24 px-8">
+          <div className="pt-24 px-4 md:px-8">
             {renderContent()}
           </div>
         </main>
