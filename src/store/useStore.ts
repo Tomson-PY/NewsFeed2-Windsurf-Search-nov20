@@ -53,13 +53,13 @@ const defaultFeeds: Feed[] = [
   {
     id: 'mit-ai',
     title: 'MIT AI News',
-    url: 'https://news.mit.edu/topic/artificial-intelligence2-rss.xml',
+    url: 'https://news.mit.edu/topic/artificial-intelligence2/rss',
     category: 'AI',
   },
   {
     id: 'deepmind',
     title: 'DeepMind Blog',
-    url: 'https://deepmind.com/blog/feed/basic/',
+    url: 'https://deepmind.google/blog/feed/basic/',
     category: 'AI',
   },
   {

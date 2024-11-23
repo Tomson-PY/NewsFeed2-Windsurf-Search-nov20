@@ -52,12 +52,15 @@ export async function parseFeed(url: string, category: string, feedId: string): 
     }
     
     const text = await response.text();
+    console.log(`Feed content for ${feedId}:`, text.substring(0, 500));
+    
     if (!text?.trim()) {
       console.warn(`Empty response from feed: ${url}`);
       return [];
     }
 
     const result = parser.parse(text);
+    console.log(`Parsed feed structure for ${feedId}:`, JSON.stringify(result, null, 2).substring(0, 500));
     
     // Handle different RSS feed structures
     const channel = result.rss?.channel || result.feed || result;
@@ -79,6 +82,8 @@ export async function parseFeed(url: string, category: string, feedId: string): 
                      item.description || 
                      item.summary || 
                      '';
+                     
+      console.log(`Content for item in ${feedId}:`, content.substring(0, 200));
 
       // Handle different title formats
       const title = Array.isArray(item.title) ? item.title[0] : (
@@ -99,7 +104,7 @@ export async function parseFeed(url: string, category: string, feedId: string): 
         title: title || 'Untitled',
         link: link || '',
         content: cleanedContent.substring(0, 300) + (cleanedContent.length > 300 ? '...' : ''),
-        fullContent: content, // Store the full content for image extraction
+        fullContent: content,
         pubDate: item.pubDate || item.published || item.updated || new Date().toISOString(),
         category,
         feedId

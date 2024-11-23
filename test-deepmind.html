@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DeepMind Feed Test</title>
+</head>
+<body>
+    <h1>DeepMind Feed Content</h1>
+    <pre id="output"></pre>
+    <script>
+        async function testDeepMindFeed() {
+            const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://deepmind.com/blog/feed/basic/');
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                console.log('Raw feed content:', text);
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+                
+                // Get all items
+                const items = xmlDoc.getElementsByTagName('item');
+                let output = '';
+                
+                for (let i = 0; i < Math.min(3, items.length); i++) {
+                    const item = items[i];
+                    output += '\n\n--- Article ' + (i + 1) + ' ---\n';
+                    output += 'Title: ' + (item.getElementsByTagName('title')[0]?.textContent || 'No title') + '\n';
+                    output += 'Description: ' + (item.getElementsByTagName('description')[0]?.textContent || 'No description') + '\n';
+                    output += 'Content: ' + (item.getElementsByTagName('content:encoded')[0]?.textContent || 'No content') + '\n';
+                    
+                    // Look for image tags in content
+                    const content = item.getElementsByTagName('content:encoded')[0]?.textContent || '';
+                    const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
+                    if (imgMatch) {
+                        output += 'Found image URL: ' + imgMatch[1] + '\n';
+                    }
+                    
+                    // Look for media:content tags
+                    const mediaContent = item.getElementsByTagName('media:content');
+                    if (mediaContent.length > 0) {
+                        output += 'Found media:content URL: ' + mediaContent[0].getAttribute('url') + '\n';
+                    }
+                }
+                
+                document.getElementById('output').textContent = output;
+            } catch (error) {
+                document.getElementById('output').textContent = 'Error fetching feed: ' + error;
+            }
+        }
+        testDeepMindFeed();
+    </script>
+</body>
+</html>

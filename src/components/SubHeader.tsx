@@ -58,14 +58,14 @@ export const SubHeader: React.FC<SubHeaderProps> = ({ activeView }) => {
   }, [refreshFeeds, isRefreshing]);
 
   return (
-    <div className="sticky top-16 z-10 bg-background border-b">
+    <div className="sticky top-16 z-10 bg-blue-900 text-white border-b">
       <div className="container mx-auto">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-3">
-            <Icon className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground" />
+            <Icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
             <div>
-              <h2 className="text-lg md:text-xl font-semibold">{content.title}</h2>
-              <p className="text-xs md:text-sm text-muted-foreground">{content.subtitle}</p>
+              <h2 className="text-lg md:text-xl font-semibold text-white">{content.title}</h2>
+              <p className="text-xs md:text-sm text-gray-200">{content.subtitle}</p>
             </div>
           </div>
           

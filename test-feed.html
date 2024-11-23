@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feed Test</title>
+</head>
+<body>
+    <pre id="output"></pre>
+    <script>
+        async function testFeed() {
+            const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://news.mit.edu/rss/topic/artificial-intelligence2');
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                document.getElementById('output').textContent = 
+                    'Response status: ' + response.status + '\n\n' +
+                    'Response text:\n' + text.substring(0, 500) + '...';
+            } catch (error) {
+                document.getElementById('output').textContent = 'Error fetching feed: ' + error;
+            }
+        }
+        testFeed();
+    </script>
+</body>
+</html>
