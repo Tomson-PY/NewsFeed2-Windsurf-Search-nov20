@@ -58,6 +58,8 @@ export const Dashboard: React.FC = () => {
 
   // Add utility function to extract image URL from content
   const extractImageUrl = (content: string): string | null => {
+    if (!content) return null;
+    
     console.log('Checking content for images:', content);
 
     // Try to find an img tag in the content
@@ -81,8 +83,15 @@ export const Dashboard: React.FC = () => {
       return enclosureMatch[1];
     }
 
-    // Try to find any URL that ends with an image extension
-    const urlMatch = content.match(/https?:\/\/[^\s<>"']+?\.(?:jpg|jpeg|gif|png|webp)/i);
+    // Try to find an og:image meta tag
+    const ogMatch = content.match(/<meta[^>]+property="og:image"[^>]+content="([^">]+)"/);
+    if (ogMatch) {
+      console.log('Found og:image tag:', ogMatch[1]);
+      return ogMatch[1];
+    }
+
+    // Try to find any URL that looks like an image
+    const urlMatch = content.match(/https?:\/\/[^"\s]+\.(?:jpg|jpeg|png|gif|webp)/i);
     if (urlMatch) {
       console.log('Found image URL:', urlMatch[0]);
       return urlMatch[0];
@@ -165,19 +174,73 @@ export const Dashboard: React.FC = () => {
     return pageNumbers;
   };
 
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  
+  // Minimum swipe distance for navigation (in pixels)
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) {
+      // Swipe left -> next page
+      const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
+      setCurrentPage(prev => Math.min(totalPages, prev + 1));
+    }
+    
+    if (isRightSwipe) {
+      // Swipe right -> previous page
+      setCurrentPage(prev => Math.max(1, prev - 1));
+    }
+    
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
   // Add keyboard shortcut handler
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      // Only trigger if not in an input field already
-      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
-        e.preventDefault();
-        searchInputRef.current?.focus();
+      // Only handle keyboard navigation on desktop/laptop
+      if (window.innerWidth <= 768) return;
+
+      // Only trigger if not in an input field or textarea
+      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case '/':
+          e.preventDefault();
+          searchInputRef.current?.focus();
+          break;
+        case 'j':
+          e.preventDefault();
+          setCurrentPage(prev => Math.max(1, prev - 1)); // Go to previous page, but not below 1
+          break;
+        case 'k':
+          e.preventDefault();
+          setCurrentPage(prev => Math.min(totalPages, prev + 1)); // Go to next page, but not above total pages
+          break;
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [sortedItems.length]);
 
   useEffect(() => {
     console.log('Feed items:', feedItems);
@@ -188,7 +251,12 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-8">
+    <div 
+      className="p-8"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       {/* Search Bar */}
       <div className="mb-6 max-w-2xl mx-auto">
         <div className="relative w-full max-w-sm">
@@ -202,7 +270,7 @@ export const Dashboard: React.FC = () => {
               setCurrentPage(1); // Reset to first page when searching
             }}
             placeholder="Search Articles... shortcut press /"
-            className="w-full px-9 py-2 rounded-lg border border-input bg-card text-card-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+            className="w-full px-9 py-2 rounded-lg border border-gray-200 bg-gray-50 text-card-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors dark:border-input dark:bg-card"
           />
           {searchQuery && (
             <button
