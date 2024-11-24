@@ -37,23 +37,25 @@ const defaultFeeds: Feed[] = [
     title: 'Hacker News',
     url: 'https://hnrss.org/frontpage',
     category: 'Technology',
+    useProxy: true
   },
   {
     id: 'google-ai',
     title: 'Google AI Blog',
-    url: 'http://googleaiblog.blogspot.com/atom.xml',
+    url: 'https://blog.google/technology/ai/rss/',
     category: 'AI',
   },
   {
     id: 'openai',
     title: 'OpenAI Blog',
-    url: 'https://openai.com/blog/rss.xml',
+    url: 'https://openai.com/api/feed.rss',
     category: 'AI',
+    useProxy: true
   },
   {
     id: 'mit-ai',
     title: 'MIT AI News',
-    url: 'https://news.mit.edu/topic/artificial-intelligence2/rss',
+    url: 'https://news.mit.edu/rss/topic/artificial-intelligence',
     category: 'AI',
   },
   {
@@ -63,39 +65,22 @@ const defaultFeeds: Feed[] = [
     category: 'AI',
   },
   {
-    id: 'aws-ai',
-    title: 'AWS AI Blog',
-    url: 'https://aws.amazon.com/blogs/machine-learning/feed/',
-    category: 'AI',
-  },
-  {
-    id: 'nvidia-ai',
-    title: 'NVIDIA AI News',
-    url: 'https://blogs.nvidia.com/blog/category/deep-learning/feed/',
-    category: 'AI',
-  },
-  {
-    id: 'microsoft-ai',
-    title: 'Microsoft AI Blog',
-    url: 'https://blogs.microsoft.com/ai/feed/',
-    category: 'AI',
-  },
-  {
     id: 'ml-mastery',
     title: 'Machine Learning Mastery',
     url: 'https://machinelearningmastery.com/feed/',
     category: 'AI Learning',
   },
   {
-    id: 'towards-datascience',
-    title: 'Towards Data Science',
-    url: 'https://towardsdatascience.com/feed',
+    id: 'towards-data-science',
+    title: 'Towards Data Science - AI',
+    url: 'https://medium.com/feed/towards-data-science/tagged/artificial-intelligence',
     category: 'AI Learning',
+    useProxy: true
   }
 ];
 
 const initialPreferences: UserPreferences = {
-  selectedCategories: ['Science', 'Technology', 'AI', 'AI Research', 'AI Learning'],
+  selectedCategories: ['Science', 'Technology', 'AI', 'AI Learning'],
   selectedFeeds: defaultFeeds.map(feed => feed.id),
   bookmarkedItems: [],
   readItems: [],
@@ -122,7 +107,7 @@ export const useStore = create<StoreState>()(
             .filter(feed => state.preferences.selectedFeeds.includes(feed.id))
             .map(async (feed) => {
               try {
-                const proxiedUrl = createProxiedUrl(feed.url);
+                const proxiedUrl = feed.useProxy ? createProxiedUrl(feed.url) : feed.url;
                 const items = await parseFeed(proxiedUrl, feed.category, feed.id);
                 return items;
               } catch (error) {

@@ -4,12 +4,6 @@ export const createProxiedUrl = (url: string): string => {
     return url;
   }
 
-  // For Medium-based feeds (including Towards Data Science), use a different proxy
-  if (url.includes('medium.com') || url.includes('towardsdatascience.com')) {
-    return `https://cors-anywhere.herokuapp.com/${url}`;
-  }
-
-  // Use allorigins with the 'raw' endpoint for RSS feeds
-  // The 'get' endpoint sometimes has issues with XML content
+  // Use allorigins for all feeds
   return `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
 };

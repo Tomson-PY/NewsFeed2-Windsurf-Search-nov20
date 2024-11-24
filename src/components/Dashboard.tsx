@@ -125,9 +125,9 @@ export const Dashboard: React.FC = () => {
     return null;
   };
 
-  // Get active feeds (feeds that have items)
+  // Get active feeds (include all selected feeds, even if they don't have items yet)
   const activeFeeds = feeds
-    .filter(feed => feedItems.some(item => item.feedId === feed.id))
+    .filter(feed => preferences.selectedFeeds.includes(feed.id))
     .sort((a, b) => a.title.localeCompare(b.title))
     .map(feed => ({
       id: feed.id,

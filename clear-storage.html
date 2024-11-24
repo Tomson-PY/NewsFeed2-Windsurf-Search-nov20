@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Storage</title>
+</head>
+<body>
+    <h2>Clear Local Storage</h2>
+    <button onclick="clearStorage()">Clear Storage and Reload</button>
+    <script>
+        function clearStorage() {
+            localStorage.removeItem('feed-reader-storage');
+            window.location.href = 'http://localhost:5173';
+        }
+    </script>
+</body>
+</html>

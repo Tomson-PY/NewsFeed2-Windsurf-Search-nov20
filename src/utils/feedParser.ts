@@ -123,21 +123,26 @@ const getFullContent = (item: any): string => {
 
 export async function parseFeed(url: string, category: string, feedId: string): Promise<FeedItem[]> {
   try {
+    console.log(`Fetching feed ${feedId} from URL: ${url}`);
     const response = await fetch(url);
+    console.log(`Feed ${feedId} response status:`, response.status);
+    
     if (!response.ok) {
+      console.error(`HTTP error for feed ${feedId}! status: ${response.status}`);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const text = await response.text();
-    console.log(`Feed content for ${feedId}:`, text.substring(0, 500));
+    console.log(`Feed ${feedId} content length:`, text.length);
+    console.log(`Feed ${feedId} first 500 chars:`, text.substring(0, 500));
     
     if (!text?.trim()) {
-      console.warn(`Empty response from feed: ${url}`);
+      console.warn(`Empty response from feed ${feedId}: ${url}`);
       return [];
     }
 
     const result = parser.parse(text);
-    console.log(`Parsed feed structure for ${feedId}:`, JSON.stringify(result, null, 2).substring(0, 500));
+    console.log(`Feed ${feedId} parsed structure:`, JSON.stringify(result, null, 2).substring(0, 500));
     
     // Handle different RSS feed structures
     const channel = result.rss?.channel || result.feed || result;
