@@ -71,13 +71,13 @@ export const FeedManager: React.FC = () => {
         <div className="flex justify-end space-x-4 mb-4">
           <button
             onClick={() => resetFeeds()}
-            className="px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+            className="px-4 py-2 text-sm font-medium text-white bg-primary/80 hover:bg-primary rounded-lg transition-colors"
           >
             Reset to Default Feeds
           </button>
           <button
             onClick={handleClearAllFeeds}
-            className="px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+            className="px-4 py-2 text-sm font-medium text-white bg-primary/80 hover:bg-primary rounded-lg transition-colors"
           >
             Clear All Feeds
           </button>

@@ -30,11 +30,12 @@ export const Dashboard: React.FC = () => {
     const now = new Date();
     const articleDate = new Date(pubDate);
     
-    // Reset time part for "FRESH" comparison
-    const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const articleDay = new Date(articleDate.getFullYear(), articleDate.getMonth(), articleDate.getDate());
+    // Calculate the difference in days
+    const diffTime = Math.abs(now.getTime() - articleDate.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
-    return nowDate.getTime() === articleDay.getTime();
+    // Consider fresh if it's today or yesterday (0 or 1 day old)
+    return diffDays <= 1;
   };
 
   const filterItemsByFresh = (item: any) => {
@@ -60,16 +61,16 @@ export const Dashboard: React.FC = () => {
     const now = new Date();
     const articleDate = new Date(pubDate);
     
-    // Reset time part for "FRESH" comparison
-    const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const articleDay = new Date(articleDate.getFullYear(), articleDate.getMonth(), articleDate.getDate());
+    // Calculate the difference in days
+    const diffTime = Math.abs(now.getTime() - articleDate.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
-    if (nowDate.getTime() === articleDay.getTime()) {
+    // Show FRESH for today and yesterday
+    if (diffDays <= 1) {
       return <span className="text-emerald-500 font-bold">FRESH</span>;
     }
     
-    const diffTime = Math.ceil((nowDate.getTime() - articleDay.getTime()) / (1000 * 60 * 60 * 24));
-    return <span className="text-gray-500">{diffTime} {diffTime === 1 ? 'Day' : 'Days'}</span>;
+    return <span className="text-gray-500">{diffDays} {diffDays === 1 ? 'Day' : 'Days'}</span>;
   };
 
   // Add reading time estimation utility

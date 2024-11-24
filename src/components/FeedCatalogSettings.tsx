@@ -6,23 +6,15 @@ export const FeedCatalogSettings: React.FC = () => {
     const { preferences, updatePreferences, resetFeeds } = useStore();
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
     const [isApplying, setIsApplying] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [titleSearch, setTitleSearch] = useState('');
     
     const categoryMap = getFeedsByCategory();
     const categories = Array.from(categoryMap.keys());
     
-    // Filter feeds based on category and search query
-    const filteredFeeds = selectedCategory === 'all' 
+    // Get initial feeds based on category
+    const categoryFeeds = selectedCategory === 'all' 
         ? feedCatalog 
         : categoryMap.get(selectedCategory) || [];
-
-    const searchFilteredFeeds = searchQuery
-        ? filteredFeeds.filter(feed => 
-            feed.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            feed.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            feed.category.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        : filteredFeeds;
 
     // Define default feed IDs
     const defaultFeedIds = [
@@ -39,11 +31,27 @@ export const FeedCatalogSettings: React.FC = () => {
         'towards-datascience'
     ];
 
-    // Separate default feeds from other feeds and sort the others alphabetically
-    const defaultFeeds = searchFilteredFeeds.filter(feed => defaultFeedIds.includes(feed.id));
-    const otherFeeds = searchFilteredFeeds
+    // First, separate and sort all feeds
+    const allDefaultFeeds = categoryFeeds
+        .filter(feed => defaultFeedIds.includes(feed.id))
+        .sort((a, b) => a.title.localeCompare(b.title));
+
+    const allOtherFeeds = categoryFeeds
         .filter(feed => !defaultFeedIds.includes(feed.id))
         .sort((a, b) => a.title.localeCompare(b.title));
+
+    // Then apply title search if there is one
+    const defaultFeeds = titleSearch.trim()
+        ? allDefaultFeeds.filter(feed => 
+            feed.title.toLowerCase().includes(titleSearch.toLowerCase())
+          )
+        : allDefaultFeeds;
+
+    const otherFeeds = titleSearch.trim()
+        ? allOtherFeeds.filter(feed => 
+            feed.title.toLowerCase().includes(titleSearch.toLowerCase())
+          )
+        : allOtherFeeds;
 
     const handleFeedSelection = (feedId: string) => {
         const newSelections = preferences.catalogSelections?.includes(feedId)
@@ -115,9 +123,9 @@ export const FeedCatalogSettings: React.FC = () => {
                 <div className="flex-1">
                     <input
                         type="text"
-                        placeholder="Search feeds..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search feed titles..."
+                        value={titleSearch}
+                        onChange={(e) => setTitleSearch(e.target.value)}
                         className="w-full px-3 py-1.5 rounded-lg bg-muted text-card-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                 </div>
@@ -143,14 +151,14 @@ export const FeedCatalogSettings: React.FC = () => {
             <div className="flex justify-end space-x-4 mb-4">
                 <button
                     onClick={handleResetToDefault}
-                    className="px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary/80 hover:bg-primary rounded-lg transition-colors"
                     disabled={isApplying}
                 >
                     Reset to Default Feeds
                 </button>
                 <button
                     onClick={() => updatePreferences({ catalogSelections: [] })}
-                    className="px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary/80 hover:bg-primary rounded-lg transition-colors"
                     disabled={isApplying}
                 >
                     Clear Selections
@@ -168,13 +176,13 @@ export const FeedCatalogSettings: React.FC = () => {
                 {/* Default Feeds Section */}
                 {defaultFeeds.length > 0 && (
                     <div className="border-b border-border">
-                        <div className="px-4 py-2 bg-primary/10 text-primary font-medium">
+                        <div className="px-4 py-2 bg-primary text-white font-medium">
                             Default Feeds
                         </div>
                         {defaultFeeds.map((feed) => (
                             <div 
                                 key={feed.id} 
-                                className="flex items-center px-4 py-3 bg-primary/5 hover:bg-primary/10 transition-colors border-b border-border/50 last:border-b-0"
+                                className="flex items-center px-4 py-3 bg-primary/10 hover:bg-primary/20 transition-colors border-b border-border/50 last:border-b-0"
                             >
                                 <input
                                     type="checkbox"
@@ -187,7 +195,7 @@ export const FeedCatalogSettings: React.FC = () => {
                                     <div className="font-medium text-foreground">{feed.title}</div>
                                     <div className="text-sm text-muted-foreground">{feed.description}</div>
                                 </label>
-                                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                                <span className="text-xs px-2 py-1 rounded-full bg-primary text-white">
                                     {feed.category}
                                 </span>
                             </div>
@@ -227,7 +235,7 @@ export const FeedCatalogSettings: React.FC = () => {
             </div>
 
             <div className="text-sm text-muted-foreground">
-                {searchFilteredFeeds.length} feeds available • {preferences.catalogSelections?.length || 0} selected
+                {categoryFeeds.length} feeds available • {preferences.catalogSelections?.length || 0} selected
             </div>
         </div>
     );
