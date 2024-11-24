@@ -9,6 +9,20 @@ interface GuideProps {
 export const Guide: React.FC<GuideProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
+  // Add Escape key handler
+  React.useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background rounded-lg shadow-xl">
@@ -33,6 +47,84 @@ export const Guide: React.FC<GuideProps> = ({ isOpen, onClose }) => {
 
           {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Feed Management */}
+            <div className="bg-muted/50 rounded-lg p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Layout className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-semibold">Feed Management</h2>
+              </div>
+              <ul className="space-y-2 text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Toggle feeds on/off in Active Feeds tab
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Browse and add new feeds from Feed Catalog
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Filter feeds by category
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Reset to default feeds or clear all
+                </li>
+              </ul>
+            </div>
+
+            {/* Dashboard Features */}
+            <div className="bg-muted/50 rounded-lg p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-semibold">Dashboard Features</h2>
+              </div>
+              <ul className="space-y-2 text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Real-time feed updates every 5 minutes
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Filter by "Fresh" content (last 24 hours)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Search across all feed content
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Filter by specific feeds or categories
+                </li>
+              </ul>
+            </div>
+
+            {/* Search and Tags */}
+            <div className="bg-muted/50 rounded-lg p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Search className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-semibold">Search & Tags</h2>
+              </div>
+              <ul className="space-y-2 text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Create custom search tags
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Save tag presets for quick filtering
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Filter content by multiple tags
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
+                  Clear all tags with one click
+                </li>
+              </ul>
+            </div>
+
             {/* Keyboard Shortcuts */}
             <div className="bg-muted/50 rounded-lg p-6">
               <div className="flex items-center gap-2 mb-4">
@@ -55,109 +147,39 @@ export const Guide: React.FC<GuideProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Search Shortcut</span>
+                  <span className="text-muted-foreground">Search</span>
                   <kbd className="px-2 py-1 bg-background rounded border text-sm">/</kbd>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Close modals</span>
+                  <kbd className="px-2 py-1 bg-background rounded border text-sm">Esc</kbd>
+                </div>
               </div>
-            </div>
-
-            {/* Notifications */}
-            <div className="bg-muted/50 rounded-lg p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Bell className="w-5 h-5 text-primary" />
-                <h2 className="text-xl font-semibold">Smart Notifications</h2>
-              </div>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Instant feedback for read/unread status
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Bookmark confirmation messages
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Auto-dismissing after 3 seconds
-                </li>
-              </ul>
-            </div>
-
-            {/* Article Cards */}
-            <div className="bg-muted/50 rounded-lg p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Layout className="w-5 h-5 text-primary" />
-                <h2 className="text-xl font-semibold">Enhanced Articles</h2>
-              </div>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Reading time estimates
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Category badges & tags
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Interactive hover effects
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Smart content preview
-                </li>
-              </ul>
-            </div>
-
-            {/* Search Experience */}
-            <div className="bg-muted/50 rounded-lg p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Search className="w-5 h-5 text-primary" />
-                <h2 className="text-xl font-semibold">Smart Search</h2>
-              </div>
-              <ul className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Sticky search bar
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Real-time filtering
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Keyboard shortcut support
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="block w-1 h-1 mt-2 rounded-full bg-primary" />
-                  Clear feedback messages
-                </li>
-              </ul>
             </div>
           </div>
 
           {/* Pro Tips */}
           <div className="bg-primary/5 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Zap className="w-5 h-5 text-primary" />
+              <Bell className="w-5 h-5 text-primary" />
               <h2 className="text-xl font-semibold">Pro Tips</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-muted-foreground">
               <div className="flex items-start gap-2">
                 <Eye className="w-4 h-4 mt-1 text-primary" />
-                <p>Use keyboard shortcuts for faster navigation through articles</p>
+                <p>Use the "Fresh" filter to focus on latest updates</p>
               </div>
               <div className="flex items-start gap-2">
                 <Eye className="w-4 h-4 mt-1 text-primary" />
-                <p>Check reading time to better plan your reading sessions</p>
+                <p>Combine multiple search tags for precise filtering</p>
               </div>
               <div className="flex items-start gap-2">
                 <Eye className="w-4 h-4 mt-1 text-primary" />
-                <p>Use tags to organize and discover related content</p>
+                <p>Save frequently used tag combinations as presets</p>
               </div>
               <div className="flex items-start gap-2">
                 <Eye className="w-4 h-4 mt-1 text-primary" />
-                <p>Bookmark important articles to build your reading list</p>
+                <p>Use keyboard shortcuts for faster navigation</p>
               </div>
             </div>
           </div>
