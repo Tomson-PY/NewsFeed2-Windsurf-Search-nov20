@@ -55,8 +55,9 @@ const defaultFeeds: Feed[] = [
   {
     id: 'mit-ai',
     title: 'MIT AI News',
-    url: 'https://news.mit.edu/rss/topic/artificial-intelligence',
+    url: 'https://news.mit.edu/rss/topic/artificial-intelligence-ai',
     category: 'AI',
+    useProxy: true
   },
   {
     id: 'deepmind',

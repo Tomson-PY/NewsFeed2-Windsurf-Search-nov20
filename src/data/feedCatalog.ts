@@ -26,7 +26,7 @@ export const feedCatalog: FeedCatalogItem[] = [
     {
         id: 'mit-ai',
         title: 'MIT AI News',
-        url: 'https://news.mit.edu/rss/topic/artificial-intelligence',
+        url: 'https://news.mit.edu/rss/topic/artificial-intelligence-ai',
         category: 'AI',
         description: 'AI research and news from MIT'
     },
