@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
-import { FeedManager } from './components/FeedManager';
+import { FeedManagementTabs } from './components/FeedManagementTabs';
 import { BookmarkView } from './components/BookmarkView';
 import { SearchTags } from './components/SearchTags';
 import { Settings } from './components/Settings';
@@ -65,23 +65,6 @@ function App() {
     };
   }, [feeds, preferences.selectedFeeds, setFeedItems]);
 
-  const renderContent = () => {
-    switch (activeView) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'feeds':
-        return <FeedManager />;
-      case 'bookmarks':
-        return <BookmarkView />;
-      case 'tags':
-        return <SearchTags />;
-      case 'settings':
-        return <Settings />;
-      default:
-        return <Dashboard />;
-    }
-  };
-
   return (
     <div className={`min-h-screen bg-background ${preferences.theme}`}>
       <Header />
@@ -90,7 +73,15 @@ function App() {
         <main className="flex-1 w-full md:ml-20">
           <SubHeader activeView={activeView} />
           <div className="pt-24 px-4 md:px-8">
-            {renderContent()}
+            <div className="flex-1 overflow-auto">
+              <div className="container mx-auto px-4 py-6">
+                {activeView === 'dashboard' && <Dashboard />}
+                {activeView === 'feeds' && <FeedManagementTabs />}
+                {activeView === 'bookmarks' && <BookmarkView />}
+                {activeView === 'tags' && <SearchTags />}
+                {activeView === 'settings' && <Settings />}
+              </div>
+            </div>
           </div>
         </main>
       </div>

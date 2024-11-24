@@ -22,12 +22,17 @@ export interface TagPreset {
   tags: string[];
 }
 
+export interface FeedCatalogItem extends Feed {
+  description: string;
+}
+
 export interface UserPreferences {
-  selectedFeeds: string[];
   selectedCategories: string[];
-  searchTags: string[];
-  readItems: string[];
+  selectedFeeds: string[];
   bookmarkedItems: string[];
+  readItems: string[];
+  searchTags: string[];
   tagPresets: TagPreset[];
   theme: 'light' | 'dark';
+  catalogSelections: string[];
 }

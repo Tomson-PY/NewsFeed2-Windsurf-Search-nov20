@@ -35,6 +35,19 @@ export const FeedManager: React.FC = () => {
     }
   };
 
+  const handleClearAllFeeds = () => {
+    if (window.confirm('Are you sure you want to delete all feeds from your feed manager? This will remove all feeds from the list.')) {
+      // Get all current feed IDs
+      const feedIdsToRemove = feeds.map(feed => feed.id);
+      
+      // Remove each feed
+      feedIdsToRemove.forEach(id => removeFeed(id));
+      
+      // Refresh the view
+      refreshFeeds();
+    }
+  };
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'AI News':
@@ -55,12 +68,20 @@ export const FeedManager: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-4">
-        <button
-          onClick={handleReset}
-          className="px-4 py-2 bg-muted hover:bg-muted/80 text-yellow-500 rounded-lg transition-colors w-fit text-sm"
-        >
-          Reset to Default Feeds
-        </button>
+        <div className="flex justify-end space-x-4 mb-4">
+          <button
+            onClick={() => resetFeeds()}
+            className="px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+          >
+            Reset to Default Feeds
+          </button>
+          <button
+            onClick={handleClearAllFeeds}
+            className="px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+          >
+            Clear All Feeds
+          </button>
+        </div>
 
         <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
           <label className="font-medium text-card-foreground">

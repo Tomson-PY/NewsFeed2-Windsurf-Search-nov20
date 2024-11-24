@@ -4,18 +4,20 @@ import { CheckCircle, XCircle } from 'lucide-react';
 interface NotificationProps {
   message: string;
   type?: 'success' | 'error';
+  onDismiss?: () => void;
 }
 
-export const Notification: React.FC<NotificationProps> = ({ message, type = 'success' }) => {
+export const Notification: React.FC<NotificationProps> = ({ message, type = 'success', onDismiss }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
+      onDismiss?.();
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [onDismiss]);
 
   if (!isVisible) return null;
 

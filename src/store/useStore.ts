@@ -21,7 +21,7 @@ interface StoreState {
   removeTagPreset: (presetId: string) => void;
   applyTagPreset: (presetId: string) => void;
   toggleTheme: () => void;
-  resetFeeds: () => void;
+  resetFeeds: (selectedFeeds?: Feed[]) => void;
   refreshFeeds: () => Promise<void>;
 }
 
@@ -153,14 +153,14 @@ export const useStore = create<StoreState>()(
         })),
       setFeedItems: (items) =>
         set({ feedItems: items }),
-      resetFeeds: () =>
+      resetFeeds: (selectedFeeds?: Feed[]) =>
         set((state) => ({
-          feeds: defaultFeeds,
+          feeds: selectedFeeds || defaultFeeds,
           feedItems: [],
           preferences: {
             ...state.preferences,
-            selectedFeeds: defaultFeeds.map(feed => feed.id),
-            selectedCategories: ['Science', 'Technology', 'AI', 'AI Research', 'AI Learning']
+            selectedFeeds: (selectedFeeds || defaultFeeds).map(feed => feed.id),
+            selectedCategories: Array.from(new Set((selectedFeeds || defaultFeeds).map(feed => feed.category)))
           }
         })),
       toggleBookmark: (itemId) =>
