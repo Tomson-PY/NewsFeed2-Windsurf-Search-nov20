@@ -24,11 +24,8 @@ export const FeedCatalogSettings: React.FC = () => {
         'openai',
         'mit-ai',
         'deepmind',
-        'aws-ai',
-        'nvidia-ai',
-        'microsoft-ai',
         'ml-mastery',
-        'towards-datascience'
+        'towards-data-science'
     ];
 
     // First, separate and sort all feeds
@@ -90,11 +87,8 @@ export const FeedCatalogSettings: React.FC = () => {
             'openai',
             'mit-ai',
             'deepmind',
-            'aws-ai',
-            'nvidia-ai',
-            'microsoft-ai',
             'ml-mastery',
-            'towards-datascience'
+            'towards-data-science'
         ];
         
         // Update the catalog selections with default feed IDs

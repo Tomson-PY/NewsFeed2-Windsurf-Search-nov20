@@ -1,7 +1,7 @@
 import { FeedCatalogItem } from '../types';
 
 export const feedCatalog: FeedCatalogItem[] = [
-    // AI Research & Companies
+    // Default Feeds - AI Research & Companies
     {
         id: 'google-ai',
         title: 'Google AI Blog',
@@ -31,7 +31,7 @@ export const feedCatalog: FeedCatalogItem[] = [
         description: 'AI research and news from MIT'
     },
     
-    // AI Learning & Practice
+    // Default Feeds - AI Learning & Practice
     {
         id: 'towards-data-science',
         title: 'Towards Data Science - AI',
@@ -47,7 +47,7 @@ export const feedCatalog: FeedCatalogItem[] = [
         description: 'Practical machine learning tutorials and guides'
     },
     
-    // Science & Technology
+    // Default Feeds - Science & Technology
     {
         id: 'nasa',
         title: 'NASA Breaking News',
@@ -61,6 +61,84 @@ export const feedCatalog: FeedCatalogItem[] = [
         url: 'https://hnrss.org/frontpage',
         category: 'Technology',
         description: 'Technology news and discussions'
+    },
+
+    // Additional Feeds - AI News & Analysis
+    {
+        id: 'ai-business',
+        title: 'AI Business',
+        url: 'https://aibusiness.com/rss.xml',
+        category: 'AI News',
+        description: 'Informing and educating the global AI community'
+    },
+    {
+        id: 'venturebeat-ai',
+        title: 'VentureBeat AI',
+        url: 'https://venturebeat.com/category/ai/feed/',
+        category: 'AI News',
+        description: 'Transformative tech coverage that matters'
+    },
+    {
+        id: 'wired-ai',
+        title: 'Wired AI',
+        url: 'https://www.wired.com/feed/tag/ai/latest/rss',
+        category: 'AI News',
+        description: 'Leading technology and AI news coverage'
+    },
+
+    // Additional Feeds - AI Engineering
+    {
+        id: 'huggingface',
+        title: 'Hugging Face Blog',
+        url: 'https://huggingface.co/blog/feed.xml',
+        category: 'AI Engineering',
+        description: 'Updates from the leading ML models platform'
+    },
+    {
+        id: 'tensorflow',
+        title: 'TensorFlow Blog',
+        url: 'https://blog.tensorflow.org/feeds/posts/default?alt=rss',
+        category: 'AI Engineering',
+        description: 'Official TensorFlow framework updates'
+    },
+
+    // Additional Feeds - Data Science
+    {
+        id: 'kdnuggets',
+        title: 'KDnuggets',
+        url: 'https://www.kdnuggets.com/feed',
+        category: 'Data Science',
+        description: 'Leading platform for data science knowledge'
+    },
+    {
+        id: 'analytics-india',
+        title: 'Analytics India Magazine',
+        url: 'https://analyticsindiamag.com/feed/',
+        category: 'Data Science',
+        description: 'Data Science and Analytics news from India'
+    },
+
+    // Additional Feeds - Computer Vision & NLP
+    {
+        id: 'pyimagesearch',
+        title: 'PyImageSearch',
+        url: 'https://pyimagesearch.com/blog/feed',
+        category: 'Computer Vision',
+        description: 'Computer Vision and Deep Learning tutorials'
+    },
+    {
+        id: 'arxiv-cv',
+        title: 'arXiv Computer Vision',
+        url: 'https://arxiv.org/rss/cs.CV',
+        category: 'Computer Vision',
+        description: 'Latest Computer Vision research papers'
+    },
+    {
+        id: 'arxiv-nlp',
+        title: 'arXiv NLP',
+        url: 'https://arxiv.org/rss/cs.CL',
+        category: 'NLP',
+        description: 'Latest Natural Language Processing research'
     }
 ];
 
