@@ -22,6 +22,27 @@ type TestResult = {
   };
 };
 
+const AI_CATEGORIES = [
+  'Research & Breakthroughs AI',
+  'Enterprise & Business AI',
+  'Startups & Funding AI',
+  'Policy, Regulation & Governance AI',
+  'Ethics & Responsible AI',
+  'Robotics & Industrial Automation AI',
+  'Autonomous Vehicles & Transportation AI',
+  'Healthcare & Biotech AI',
+  'Computer Vision & Image Recognition AI',
+  'Finance & Fintech AI',
+  'Education & EdTech AI',
+  'Cybersecurity AI',
+  'Cloud, HPC & Edge AI',
+  'Tools, Libraries & Frameworks AI',
+  'Marketing & Advertising AI',
+  'Retail & eCommerce AI',
+  'Social Impact & Sustainability AI',
+  'Gaming & Entertainment AI'
+];
+
 // Regular FeedItem component
 function FeedItem({ feed, onEdit, onRemove, onTest, loadingFeeds, testResults }) {
   const getCategories = (category: string | string[]): string => {
@@ -86,7 +107,7 @@ function FeedItem({ feed, onEdit, onRemove, onTest, loadingFeeds, testResults })
               <button
                 onClick={() => onTest(feed.url, feed.id)}
                 disabled={loadingFeeds[feed.id]}
-                className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-white ${
+                className={`inline-flex items-center px-4 py-2 text-sm font-medium ${
                   loadingFeeds[feed.id]
                     ? 'bg-blue-400 cursor-not-allowed'
                     : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition-all duration-200 hover:scale-105 active:scale-95'
@@ -165,26 +186,13 @@ function EditFeedForm({ feed, onSave, onCancel }) {
   const [description, setDescription] = useState(feed.description);
   const [url, setUrl] = useState(feed.url);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    Array.isArray(feed.category) ? feed.category : [feed.category]
+    Array.isArray(feed.category) ? feed.category : feed.category ? [feed.category] : []
   );
 
-  // Get unique categories from all feeds
-  const allCategories = useMemo(() => {
-    const categories = new Set<string>();
-    feedCatalog.forEach(feed => {
-      if (Array.isArray(feed.category)) {
-        feed.category.forEach(cat => categories.add(cat));
-      } else if (feed.category) {
-        categories.add(feed.category);
-      }
-    });
-    return Array.from(categories).sort();
-  }, []);
-
   const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
+    setSelectedCategories(prev =>
       prev.includes(category)
-        ? prev.filter(cat => cat !== category)
+        ? prev.filter(c => c !== category)
         : [...prev, category]
     );
   };
@@ -271,7 +279,7 @@ function EditFeedForm({ feed, onSave, onCancel }) {
                   Categories
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {allCategories.map((category) => (
+                  {AI_CATEGORIES.map((category) => (
                     <button
                       key={category}
                       type="button"
