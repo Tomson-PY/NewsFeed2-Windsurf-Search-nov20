@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { FeedManagementTabs } from './components/FeedManagementTabs';
@@ -10,10 +11,13 @@ import { SubHeader } from './components/SubHeader';
 import { useStore } from './store/useStore';
 import { parseFeed } from './utils/feedParser';
 import { createProxiedUrl } from './utils/corsProxy';
+import { AdminPage } from './components/admin/AdminPage';
 
 function App() {
   const [activeView, setActiveView] = useState<'dashboard' | 'feeds' | 'bookmarks' | 'tags' | 'settings'>('dashboard');
   const { feeds, preferences, setFeedItems } = useStore();
+  const location = useLocation();
+  const isAdminPage = location.pathname === '/admin';
 
   // Apply theme class to document
   useEffect(() => {
@@ -65,6 +69,10 @@ function App() {
     };
   }, [feeds, preferences.selectedFeeds, setFeedItems]);
 
+  if (isAdminPage) {
+    return <AdminPage />;
+  }
+
   return (
     <div className={`min-h-screen bg-background ${preferences.theme}`}>
       <Header />
@@ -75,11 +83,13 @@ function App() {
           <div className="pt-24 px-4 md:px-8">
             <div className="flex-1 overflow-auto">
               <div className="container mx-auto px-4 py-6">
-                {activeView === 'dashboard' && <Dashboard />}
-                {activeView === 'feeds' && <FeedManagementTabs />}
-                {activeView === 'bookmarks' && <BookmarkView />}
-                {activeView === 'tags' && <SearchTags />}
-                {activeView === 'settings' && <Settings />}
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/feeds" element={<FeedManagementTabs />} />
+                  <Route path="/bookmarks" element={<BookmarkView />} />
+                  <Route path="/tags" element={<SearchTags />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
               </div>
             </div>
           </div>
