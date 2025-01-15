@@ -12,12 +12,13 @@ import { useStore } from './store/useStore';
 import { parseFeed } from './utils/feedParser';
 import { createProxiedUrl } from './utils/corsProxy';
 import { AdminPage } from './components/admin/AdminPage';
+import { ManageExistingFeeds } from './components/admin/ManageExistingFeeds';
 
 function App() {
   const [activeView, setActiveView] = useState<'dashboard' | 'feeds' | 'bookmarks' | 'tags' | 'settings'>('dashboard');
   const { feeds, preferences, setFeedItems } = useStore();
   const location = useLocation();
-  const isAdminPage = location.pathname === '/admin';
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   // Apply theme class to document
   useEffect(() => {
@@ -69,8 +70,13 @@ function App() {
     };
   }, [feeds, preferences.selectedFeeds, setFeedItems]);
 
-  if (isAdminPage) {
-    return <AdminPage />;
+  if (isAdminRoute) {
+    return (
+      <Routes>
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/manage" element={<ManageExistingFeeds />} />
+      </Routes>
+    );
   }
 
   return (
