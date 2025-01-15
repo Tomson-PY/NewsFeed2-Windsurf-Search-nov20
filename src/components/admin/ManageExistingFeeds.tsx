@@ -107,7 +107,7 @@ function FeedItem({ feed, onEdit, onRemove, onTest, loadingFeeds, testResults })
               <button
                 onClick={() => onTest(feed.url, feed.id)}
                 disabled={loadingFeeds[feed.id]}
-                className={`inline-flex items-center px-4 py-2 text-sm font-medium ${
+                className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-white ${
                   loadingFeeds[feed.id]
                     ? 'bg-blue-400 cursor-not-allowed'
                     : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform transition-all duration-200 hover:scale-105 active:scale-95'
