@@ -39,6 +39,7 @@ export function AdminPage() {
   const [feedCategories, setFeedCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [addToDefaults, setAddToDefaults] = useState(false);
 
   const clearUrl = () => {
     setUrl('');
@@ -241,39 +242,64 @@ export function AdminPage() {
               <label className="block text-lg font-medium text-purple-900 mb-4">
                 Select Categories
               </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 {AI_CATEGORIES.sort().map(category => (
-                  <button
+                  <div
                     key={category}
-                    type="button"
-                    onClick={() => toggleCategory(category)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all text-left hover:shadow-md uppercase
-                      ${selectedCategories.includes(category)
-                        ? 'bg-purple-200 text-purple-900 hover:bg-purple-300 shadow-sm'
-                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                      }`}
+                    className="flex items-center p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
                   >
-                    <div className="flex items-center">
-                      <div className={`w-4 h-4 rounded mr-3 transition-colors
-                        ${selectedCategories.includes(category)
-                          ? 'bg-purple-700'
-                          : 'border-2 border-gray-300'
-                        }`}
-                      />
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.includes(category)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedCategories([...selectedCategories, category]);
+                        } else {
+                          setSelectedCategories(
+                            selectedCategories.filter((c) => c !== category)
+                          );
+                        }
+                      }}
+                      className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+                    />
+                    <label className="ml-3 block text-sm font-medium text-gray-700">
                       {category}
-                    </div>
-                  </button>
+                    </label>
+                  </div>
                 ))}
               </div>
             </div>
 
+            {/* Add to Default Feeds Section */}
+            <div className="mt-8 mb-4 p-6 rounded-lg bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Add to Default Feeds</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Include this feed in the default feed list shown to all users
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={addToDefaults}
+                    onChange={(e) => setAddToDefaults(e.target.checked)}
+                    className="w-12 h-12 text-red-600 bg-white border-4 border-red-400 rounded-xl focus:ring-red-500 focus:ring-offset-0 transition-all cursor-pointer transform hover:scale-105 accent-red-600"
+                    style={{ accentColor: '#dc2626' }}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-purple-700 to-purple-900 text-white py-4 px-6 rounded-xl hover:from-purple-800 hover:to-purple-950 transition-all shadow-lg hover:shadow-xl font-medium text-lg"
-            >
-              Add Feed to Database
-            </button>
+            <div className="mt-6 flex justify-end">
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-700 to-purple-900 text-white py-4 px-6 rounded-xl hover:from-purple-800 hover:to-purple-950 transition-all shadow-lg hover:shadow-xl font-medium text-lg"
+              >
+                Add Feed to Database
+              </button>
+            </div>
           </form>
         </div>
       </div>
