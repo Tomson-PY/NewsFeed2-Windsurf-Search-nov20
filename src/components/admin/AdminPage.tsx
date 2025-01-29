@@ -34,6 +34,8 @@ interface FeedItem {
 
 export function AdminPage() {
   const [url, setUrl] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [previewUrl, setPreviewUrl] = useState('');
   const [previewItems, setPreviewItems] = useState<FeedItem[]>([]);
@@ -52,7 +54,12 @@ export function AdminPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitted:', { url, categories: selectedCategories });
+    console.log('Submitted:', { 
+      url, 
+      title,
+      description,
+      categories: selectedCategories 
+    });
   };
 
   const toggleCategory = (category: string) => {
@@ -242,6 +249,43 @@ export function AdminPage() {
                   </div>
                 </div>
               )}
+
+              {/* Title and Description Section */}
+              <div className="bg-gradient-to-r from-purple-100 to-white rounded-xl p-6 mb-8 border border-purple-300">
+                <div className="space-y-6">
+                  {/* Title Field */}
+                  <div>
+                    <label htmlFor="feedTitle" className="block text-sm font-medium text-purple-900 mb-2">
+                      Feed Title
+                    </label>
+                    <input
+                      type="text"
+                      id="feedTitle"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full px-4 py-3 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm"
+                      placeholder="Enter a title for this feed"
+                      required
+                    />
+                  </div>
+                  
+                  {/* Description Field */}
+                  <div>
+                    <label htmlFor="feedDescription" className="block text-sm font-medium text-purple-900 mb-2">
+                      Feed Description
+                    </label>
+                    <textarea
+                      id="feedDescription"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="w-full px-4 py-3 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm"
+                      placeholder="Enter a description for this feed"
+                      rows={3}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
 
               {/* Categories Section */}
               <div className="bg-gradient-to-r from-purple-100 to-white rounded-xl p-6 mb-8 border border-purple-300">
